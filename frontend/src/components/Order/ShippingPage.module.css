@@ -1,0 +1,38 @@
+.container {
+  padding-top: 6vmax;
+  width: 100vw;
+  min-height: 100vh;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
+.containerCard {
+  width: 30vw;
+  height: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 5px;
+  background-color: rgb(255, 255, 255);
+}
+.formCard {
+  width: 90%;
+  height: auto;
+  overflow: scroll;
+}
+
+.formCard > div > input {
+  min-width: 100%;
+  background-color: antiquewhite;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    padding-top: 10vmax;
+  }
+
+  .containerCard {
+    width: 90vw;
+  }
+}

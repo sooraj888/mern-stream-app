@@ -1,0 +1,40 @@
+.search {
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  background-color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search > div > input {
+  padding: 1vmax;
+  min-width: 30vmax;
+  border-radius: 3px;
+  border: 1px solid gray;
+  border-right-width: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  width: auto;
+}
+.search > div > button {
+  padding: 1vmax;
+  background-color: orange;
+  border: 1px solid gray;
+  border-radius: 3px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.closeSearch {
+  position: fixed;
+  right: 5vmax;
+  top: 5vmax;
+  width: auto;
+}

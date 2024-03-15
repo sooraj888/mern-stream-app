@@ -1,0 +1,48 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  transition: all 400ms;
+  align-items: center;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid black;
+  padding: 1vmax;
+  margin: 1vmax;
+  width: 35vmax;
+}
+
+.cardContainer {
+  justify-content: center;
+  margin: auto;
+}
+
+.avatar {
+  background-color: green;
+  width: 4vmax;
+  height: 4vmax;
+  border-radius: 50%;
+  border: 2px solid rgb(155, 154, 154);
+}
+
+.card:hover {
+  transform: translateY(-0.1vmax);
+  box-shadow: 1px 5px 10px rgb(192, 192, 192);
+}
+
+.card > div,
+.card > img {
+  margin: 0.2vmax 0px;
+}
+.description {
+  overflow: auto;
+  white-space: wrap;
+  height: 10vmax;
+  text-align: center;
+  width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  .card {
+    width: 70vw;
+  }
+}

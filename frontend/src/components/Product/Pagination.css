@@ -1,0 +1,53 @@
+.pagination {
+  display: flex;
+  flex-direction: row;
+  width: 90vw;
+  height: 0.5vmax;
+  align-items: center;
+  justify-content: center;
+  margin: 4vmax auto;
+  list-style: none;
+}
+
+.numberButton {
+  padding: 1vmax 1.4vmax;
+  border: 1px solid blue;
+  margin: 0px 1vmax;
+}
+
+.numberButton:hover {
+  background-color: rgb(246, 125, 125);
+  cursor: pointer;
+  border-color: transparent;
+  color: white;
+}
+
+.button {
+  padding: 1vmax;
+  border: 1px solid blue;
+}
+.button:hover {
+  background-color: rgb(248, 8, 8);
+  cursor: pointer;
+  color: white;
+  border-color: transparent;
+}
+
+.activeButton {
+  background-color: rgb(246, 125, 125);
+  color: white;
+  border-color: white;
+}
+
+.disabled {
+  background-color: white;
+  color: white;
+  border: none;
+}
+
+.disabled:hover {
+  background-color: white;
+  color: white;
+  border: none;
+  cursor: default;
+}
