@@ -1,4 +1,4 @@
---Upgrade Query's 
+--all Query's 
 
 CREATE TABLE IF NOT EXISTS users (
     userId SERIAL PRIMARY KEY UNIQUE,
@@ -8,3 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
     updatedAt TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     email VARCHAR(100) UNIQUE NOT NULL
 );
+
+ALTER TABLE users ADD COLUMN avatar JSONB;
+
+ALTER TABLE users ADD COLUMN "resetPasswordToken" VARCHAR(100);
+
+ALTER TABLE users ADD COLUMN "resetPasswordExpire" TIMESTAMP;

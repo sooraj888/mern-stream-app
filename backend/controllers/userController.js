@@ -10,7 +10,8 @@ const streamifier = require("streamifier");
 
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-
+const Validator = require('validatorjs');
+const {Op} = require('sequelize');
 cloudinary.config({
   cloud_name: "drsqqay9m",
   api_key: "825267688972368",
@@ -56,15 +57,29 @@ async function updateStream(file, public_id) {
 
 exports.registerUser = catchAsyncErrors(async (req, res) => {
   const { userName, email, password } = req.body;
-
-  
-  // const [results, metadata] = await sequelize.query("SELECT * FROM users", {
-  //   type: QueryTypes.SELECT
-  // });
+  const data = req.body;
+  const rules = {
+      email: 'required|email',
+      password: 'required|min:8',
+      userName: 'required|min:4'
+  };
+  const validation = new Validator(data, rules);
+  if (validation.fails()) {
+    return res.status(400).json({ errors: validation.errors.all() });
+  }
   const hashedPassword =await hashPassword(password)
-  const results = await Users.create({userName,email,password:hashedPassword});
-
-  await res.status(500).json({ message: "Hii",results});
+  let user;
+  if (req.file?.buffer) {
+    const result = await uploadStream(req.file);
+    user = await Users.create({userName,email,password:hashedPassword,avatar: {
+        public_id: result.public_id,
+        url: result.secure_url,
+      }});
+  } else {
+     user = await Users.create({userName,email,password:hashedPassword});
+  }
+  user.password = undefined;
+  sendToken(user, 200, res);
 });
 
 
@@ -74,23 +89,26 @@ exports.registerUser = catchAsyncErrors(async (req, res) => {
 exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
 
-  // checking if a user provided email and password
-  if (!email || !password) {
-    return next(new ErrorHandler("Please Enter Email and Password", 400));
+  const data = req.body;
+  const rules = {
+      email: 'required|email',
+      password: 'required|min:8',
+  };
+  const validation = new Validator(data, rules);
+  if (validation.fails()) {
+    return res.status(400).json({ errors: validation.errors.all() });
   }
 
-  let user = await User.findOne({ email }).select("+password");
+  let user = await Users.findOne({ where: { email } });
   if (!user) {
     return next(new ErrorHandler("Invalid Email and Password", 401));
   }
 
-  const isPasswordMatched = await user.comparePassword(password);
+  const isPasswordMatched = await verifyPassword(password,user.password);
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Invalid Email and Password", 401));
   }
-
   user.password = undefined;
-
   sendToken(user, 200, res);
 });
 
@@ -107,21 +125,21 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
 //! ------------------------ Forgot password ---------------------------
 
 exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findOne({ email: req.body.email });
+  const user = await Users.findOne({ where: { email: req.body.email }});
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
-
   // Get ResetPassword Token
-  const resetToken = await user.getResetPasswordToken();
-  // user.resetPasswordToken = resetToken;
-  await user.save({
-    validateBeforeSave: false,
-  });
+  const [resetPasswordToken,resetPasswordExpire] = user.getResetPasswordToken();
+  console.log(resetPasswordToken,resetPasswordExpire)
+  await Users.update({
+    resetPasswordToken: String(resetPasswordToken),
+    resetPasswordExpire: resetPasswordExpire
+  }, { where: { email: req.body.email } });
 
   const resetPasswordUrl = `${req.protocol}://${req.get(
     "host"
-  )}/passwordReset/${resetToken}`;
+  )}/passwordReset/${resetPasswordToken}`;
 
   const message = `Your password reset token is :- \n\n  ${resetPasswordUrl} \n\n If you have not requested this email then please ignore it`;
 
@@ -136,9 +154,14 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
       message: `Email sent to ${user.email} Successfully`,
     });
   } catch (error) {
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-    user.save({ validateBeforeSave: false });
+    await Users.update({
+      resetPasswordToken: null,
+      resetPasswordExpire: null
+    }, {
+      where: {
+        email: req.body.email
+      }
+    });
     return next(new ErrorHandler(error.message, 500));
   }
 });
@@ -150,10 +173,11 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  const user = await User.findOne({
-    resetPasswordToken,
-    resetPasswordExpire: { $gt: Date.now() },
-  });
+  const user = await Users.findOne({logging: console.log, where :{
+    resetPasswordToken: req.params.token,
+    resetPasswordExpire: { [Op.gt]: Date.now() },
+  }});
+
 
   if (!user) {
     return next(
@@ -163,12 +187,18 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
       )
     );
   }
-
-  user.password = req.body.password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpire = undefined;
-  await user.save();
-
+  const hashedPassword =await hashPassword(req.body.password)
+  await Users.update({
+    password: hashedPassword,
+    resetPasswordToken: null,
+    resetPasswordExpire: null
+  }, {
+    where: {
+      email: user.email
+    }
+  });
+  user.resetPasswordToken =  undefined;
+  user.resetPasswordExpire= undefined;
   sendToken(user, 200, res);
 });
 

@@ -18,7 +18,7 @@ const router = express.Router();
 
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-// Create a Multer instance with a memory storage
+
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/register", upload.single("image"), registerUser);

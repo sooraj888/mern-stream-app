@@ -6,7 +6,6 @@ async function hashPassword(plainPassword) {
   try {
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(plainPassword, salt);
-    console.log('Hashed password:', hash);
     return hash; // Store this hash in the database
   } catch (error) {
     console.error(error);
@@ -17,7 +16,7 @@ async function hashPassword(plainPassword) {
 async function verifyPassword(plainPassword, hash) {
   try {
     const isMatch = await bcrypt.compare(plainPassword, hash);
-    console.log('Do the passwords match?', isMatch);
+    // console.log('Do the passwords match?', isMatch);
     return isMatch;
   } catch (error) {
     console.error(error);
@@ -29,7 +28,7 @@ const plainPassword = 'your_password_here';
 hashPassword(plainPassword).then((hash) => {
   // Verify the hashed password later on
   verifyPassword(plainPassword, hash).then((isMatch) => {
-    console.log('Password verification result:', isMatch);
+    // console.log('Password verification result:', isMatch);
   });
 });
 

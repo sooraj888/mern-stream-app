@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const {  DataTypes } = require('sequelize');
-
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const sequelize = new Sequelize('postgres://youtube_db_zpd3_user:IgLpd1HaQaq8nO0Z0lUNvkTCu0z87t74@dpg-cnpsl98l6cac73apiio0-a.singapore-postgres.render.com/youtube_db_zpd3',{
     dialectOptions: {
       ssl: {
@@ -33,12 +34,42 @@ const Users = sequelize.define('users', {
   },
   email: {
     type: DataTypes.STRING,
-    unique: true,
+    unique: {
+      arg: true,
+      msg: 'This email Id is already exists'
+    },
     allowNull: false,
+  },
+  avatar: {
+    type: DataTypes.JSONB,
+    allowNull: true,
+  },
+  resetPasswordToken:  {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  resetPasswordExpire: {
+    type: DataTypes.DATE,
+    allowNull: true,
   },
 });
 
 
+Users.prototype.getJWTToken = function () {
+    return jwt.sign({ id: this.userId }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+};
+
+Users.prototype.getResetPasswordToken = function () {
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    const resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+    return [resetToken,resetPasswordExpire];
+  };
 
 const connectToDB = async () => {
   try {
