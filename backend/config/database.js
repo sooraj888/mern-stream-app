@@ -10,6 +10,7 @@ const sequelize = new Sequelize(localDB,{
     //     rejectUnauthorized: false,
     //   } 
     // }
+    logging: console.log 
 })
 
 const Users = sequelize.define('users', {
@@ -73,6 +74,66 @@ Users.prototype.getResetPasswordToken = function () {
     return [resetToken,resetPasswordExpire];
   };
 
+
+  const Content = sequelize.define("content", {
+    videoId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    thumbnail: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    videoUrl: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    videoTime: {
+      type: DataTypes.NUMERIC,
+      allowNull: false,
+    },
+    likes: {
+      type: DataTypes.NUMERIC,
+    },
+    dislikes: {
+      type: DataTypes.NUMERIC,
+    },
+    videoMetaData: {
+      type: DataTypes.JSONB,
+      allowNull: false,
+    },
+    totalViews: {
+      type: DataTypes.NUMERIC,
+    },
+    createdUserId: {
+      type: DataTypes.NUMERIC,
+      references: {
+        model: 'users',
+        key: 'userId'
+      },
+    }
+  },{
+    freezeTableName: true,
+  });
+
+
 const connectToDB = async () => {
   try {
     await sequelize.authenticate(); 
@@ -86,4 +147,4 @@ const connectToDB = async () => {
 
 
 
-module.exports = {connectToDB,sequelize,Users};
+module.exports = {connectToDB,sequelize,Users,Content};
