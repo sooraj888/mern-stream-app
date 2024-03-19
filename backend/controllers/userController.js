@@ -41,6 +41,7 @@ async function updateStream(file, public_id) {
       {
         public_id: public_id,
         invalidate: true,
+        overwrite: true,
       },
       (error, result) => {
         if (result) {
@@ -226,48 +227,38 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 //! ------------------------ Update Profile -----------------------------
 
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-  const { name, email, password, public_id } = req.body;
+  const { userName, email, password } = req.body;
   let result;
-  let user;
+  const updateObject = {
+    userName,
+    email,
+    // password,
+  }
+  const public_id= req.user?.avatar?.public_id;
   if (req.file?.buffer) {
     if (!public_id) {
       return next(new ErrorHandler("public_id required", 400));
     }
     result = await updateStream(req.file, public_id);
     console.log(result);
-    user = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        name,
-        email,
-        password,
-        avatar: {
-          public_id: result.public_id,
-          url: result.secure_url,
-        },
+    updateObject.avatar = {
+      public_id: result.public_id,
+      url: result.secure_url,
+    }
+  } 
+  await Users.update(updateObject,
+    {
+      logging: console.log,
+      where: {
+        userId: req.user.userId,
       },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-  } else {
-    user = await User.findByIdAndUpdate(
-      req.user.id,
-      {
-        name,
-        email,
-        password,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-  }
-  user.password = undefined;
-
-  sendToken(user, 200, res);
+    }
+  );
+  // console.log("user",user)
+  const updatedUser = await Users.findOne({ where: { userId:req.user.userId } });
+  updatedUser.password = undefined;
+  sendToken(updatedUser, 200, res);
+  // res.status(200).json({ success: req.user });
 });
 
 //! ------------------------ Get All users Admin -----------------------------
@@ -305,4 +296,13 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
 
   await User.findByIdAndDelete(req.params.id);
   res.status(200).json({ success: true });
+});
+
+
+
+exports.deleteMyAccount = catchAsyncErrors(async (req, res, next) => {
+  const user = req.user;
+  await cloudinary.uploader.destroy(req.user.avatar.public_id, function (result) {});
+  await Users.destroy({ where: { userId: user.userId } });
+  res.status(200).json({ success: true,message:"Account Deleted Successfully" });
 });

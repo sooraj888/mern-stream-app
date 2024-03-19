@@ -11,8 +11,12 @@ exports.isAuthenticatedUser = catchAsyncErrors(async (req, res, next) => {
   }
   const decodedData = jwt.verify(token, process.env.JWT_SECRET);
   req.user = await Users.findByPk(decodedData.id);
-  req.user.password = undefined;
-  next();
+  if (req.user){
+    req.user.password = undefined;
+    next();
+  } else {
+    return next(new ErrorHandler("User Not Found", 401));
+  }
 });
 
 exports.authorizeRole = (...roles) => {
