@@ -20,7 +20,7 @@ cloudinary.config({
 // Create a Multer instance with a memory storage
 
 const { QueryTypes } = require('sequelize');
-const { sequelize,Content } = require('../config/database');
+const { sequelize,Content,Users, Comments } = require('../config/database');
 const {hashPassword,verifyPassword} = require("../utils/password")
 
 const uploadVideo = async (file) => {
@@ -69,8 +69,61 @@ exports.uploadContent = catchAsyncErrors(async (req, res) => {
 
 exports.getContent = catchAsyncErrors(async (req, res) => {
   const contents = await Content.findAll({
-    limit: 20, 
-    offset: 0,
+    limit: req.query.offset || 20, 
+    offset: req.query.offset || 0,
+    include: [{
+      model: Users,
+      attributes: { exclude: ['password','resetPasswordToken','resetPasswordExpire'] },
+  }],
   });
   res.status(200).json({success:true,contents});
+})
+
+exports.getContentDetails = catchAsyncErrors(async (req, res) => {
+  const contentDetails = await Content.findByPk(req.params.id,{
+    include: [{
+      model: Users,
+      attributes: { exclude: ['password','resetPasswordToken','resetPasswordExpire'] },
+  }],
+  });
+  if (!contentDetails) {
+    return res.status(400).json({ success: false, message: "video not found" });
+  }
+  res.status(200).json({success:true,contentDetails});
+});
+
+
+exports.getComments = catchAsyncErrors(async (req, res) => {
+  const comments = await Comments.findAll({
+    where: {commentVideoId: req.params.id},
+    limit: req.query.offset || 20, 
+    offset: req.query.offset || 0,
+    include: [{
+      model: Users,
+      attributes: { exclude: ['password','resetPasswordToken','resetPasswordExpire'] },
+  }],
+  });
+  if (!comments) {
+    return res.status(400).json({ success: false, message: "no comments found" });
+  }
+  res.status(200).json({success:true,comments});
+})
+
+
+exports.addComment = catchAsyncErrors(async (req, res) => {
+  const data = req.body;
+  const rules = {
+    commentMessage: 'required',
+    commentUserId: 'required',
+  };
+  const validation = new Validator(data, rules);
+  if (validation.fails()) {
+    return res.status(400).json({ errors: validation.errors.all() });
+  }
+  const {commentMessage,commentUserId} = req.body;
+  console.log(commentMessage,commentUserId,req.params.id)
+  const comment = await Comments.create({
+    commentUserId, commentMessage, commentVideoId: req.params.id
+  });
+  res.status(200).json({success:true,message: "Comment added successfully"});
 })

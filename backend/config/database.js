@@ -133,6 +133,37 @@ Users.prototype.getResetPasswordToken = function () {
     freezeTableName: true,
   });
 
+  Content.belongsTo(Users, { foreignKey: 'createdUserId' });
+
+  const Comments = sequelize.define("comments", {
+    commentId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    commentUserId: {
+      type: DataTypes.NUMERIC,
+      references: {
+        model: 'users',
+        key: 'userId'
+      },
+    },
+    commentMessage: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    commentVideoId: {
+      type: DataTypes.NUMERIC,
+      references: {
+        model: 'Content',
+        key: 'videoId'
+      },
+    },
+  },{
+    freezeTableName: true,
+  });
+  Comments.belongsTo(Users, { foreignKey: 'commentUserId' });
+  Comments.belongsTo(Content, { foreignKey: 'commentVideoId' });
 
 const connectToDB = async () => {
   try {
@@ -147,4 +178,4 @@ const connectToDB = async () => {
 
 
 
-module.exports = {connectToDB,sequelize,Users,Content};
+module.exports = {connectToDB,sequelize,Users,Content,Comments};

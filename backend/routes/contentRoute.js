@@ -1,6 +1,6 @@
 const express = require("express");
 const {
-    uploadContent,getContent
+    uploadContent,getContent, getContentDetails,getComments,addComment
 } = require("../controllers/contentController");
 const { isAuthenticatedUser, authorizeRole } = require("../middleware/auth");
 const router = express.Router();
@@ -12,5 +12,9 @@ const upload = multer({ storage: multer.memoryStorage(),limits: { fileSize: 1038
 
 router.post("/uploadVideo", upload.single("video"),isAuthenticatedUser, uploadContent);
 router.get("/contentList",getContent)
+router.get("/contentDetails/:id",getContentDetails);
+router.get("/getComments/:id",getComments);
+router.post("/addComment/:id",addComment);
+
 
 module.exports = router;
