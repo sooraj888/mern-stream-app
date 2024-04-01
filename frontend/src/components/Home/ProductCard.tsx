@@ -11,6 +11,8 @@ export default function Product({ product }: { product: any }) {
     size: window.innerWidth < 600 ? 20 : 20,
   };
 
+  
+
   return (
     <Link className="productCard" to={`/product/${product?._id}`}>
       <img
