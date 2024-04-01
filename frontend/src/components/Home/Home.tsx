@@ -8,6 +8,8 @@ import { getAllProducts } from "../../redux/product/productSlice";
 import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
 import ProductCard from "./ProductCard";
+import {VideoJS} from "../VideoPlayer/VideoPlayer";
+import videojs from 'video.js';
 
 export default function Home() {
   const { products, productCount, loading, error, errorMessage } = useSelector(
@@ -18,7 +20,8 @@ export default function Home() {
 
   useEffect((): any => {
     if (error) {
-      return bottomAlert.error(errorMessage);
+      bottomAlert.error(errorMessage);
+      return ;
     }
     dispatch(getAllProducts({}));
   }, [dispatch, error, bottomAlert]);
@@ -27,27 +30,35 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
+  const playerRef = React.useRef(null);
+  const videoJsOptions = {
+    autoplay: true,
+    controls: true,
+    responsive: true,
+    fluid: true,
+    sources: [{ src: 'https://res.cloudinary.com/drsqqay9m/video/upload/v1710878560/fo8a8vokddirmswuuwfk.mp4', type: 'video/mp4' }]
+  };
+
+  const handlePlayerReady = (player:any) => {
+    playerRef.current = player;
+    // You can handle player events here, for example:
+    player.on('waiting', () => {
+      videojs.log('Player is waiting');
+    });
+    player.on('dispose', () => {
+      videojs.log('Player will dispose');
+    });
+  };
+
+
   return (
     <Fragment>
       {loading ? (
         <Loader />
       ) : (
-        <Fragment>
-          <Title>E-Commerce</Title>
-          <div className="banner">
-            <p>Welcome to E-commerce</p>
-            <h1>Find Amazing Product Below </h1>
-            <a href="#container">
-              <button>Scroll</button>
-            </a>
-          </div>
-          <h2 className="homeHeading">Featured Product</h2>
-          <div className={"container"} id={"container"}>
-            {products?.map((item: any) => {
-              return <ProductCard product={item} key={item._id} />;
-            })}
-          </div>
-        </Fragment>
+       <>
+        <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+        </>
       )}
     </Fragment>
   );

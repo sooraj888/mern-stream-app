@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import "./LogInSignUpPage.css";
 import { BiSearch, BiSolidLock } from "react-icons/bi";
 import { BsFillPersonFill } from "react-icons/bs";
@@ -11,11 +11,13 @@ import { useSelector } from "react-redux";
 import Loader from "../layout/Loader/Loader";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useAlert } from "react-alert";
+import { MenuContext } from "../../context/MainContext";
 var isFirstTime = true;
 export default function LogInSignUpPage() {
   const switchBtnRef = useRef<HTMLButtonElement>(null);
   const loginFormRef = useRef<HTMLFormElement>(null);
   const signUpFormRef = useRef<HTMLFormElement>(null);
+  const {setShowHeader} = useContext(MenuContext)
 
   // const focus=useIsF
 
@@ -112,9 +114,11 @@ export default function LogInSignUpPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const redirectParam = searchParams.get("redirect");
-  const redirect = redirectParam ? `/${redirectParam}` : "/profile";
+  const redirect = redirectParam ? `/${redirectParam}` : "/";
+  console.log(redirectParam)
   useEffect(() => {
     if (isAuthenticated) {
+      console.log(redirectParam)
       navigate(redirect);
     }
   }, [isAuthenticated, redirect]);
@@ -127,6 +131,13 @@ export default function LogInSignUpPage() {
     }
     isFirstTime = false;
   }, [error]);
+
+  useEffect(()=>{
+    setShowHeader(false);
+    return ()=>{
+      setShowHeader(true);
+    }
+  },[])
 
   return (
     <div className="authContainer">

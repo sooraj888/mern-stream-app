@@ -44,7 +44,7 @@ export default function CartPage() {
     dispatch(removeCartItem({ productId }));
   };
   const checkoutHandler = () => {
-    navigate("/login?redirect=shipping");
+    navigate("/login?redirect=profile");
   };
 
   return (

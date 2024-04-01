@@ -1,0 +1,79 @@
+#header {
+    display: flex;
+    color: white;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 1rem;
+}
+
+.searchContainer {
+   width: 45%;
+   align-self: center;
+   display: flex;
+   height: 60%;
+   align-items: center;
+}
+
+#search {
+    flex: 1;
+    height: 100%;
+    padding-left: 1vmax;
+    border-radius: 20px 0px 0px 20px;
+    z-index: 2;
+}
+
+#search:focus{
+    outline: 1px solid rgb(49, 112, 249) !important;
+}
+
+#search + div {
+    position: relative;
+    width: 0px;
+    transform: translate(-35px);
+    z-index: 3; 
+}
+
+#search + div > button {
+   width: 30px;
+   height: 30px;
+   z-index: 4;
+   padding-bottom: 1px;
+   border-radius: 100%;
+   box-shadow: 0px;
+   border-width: 0px;
+   text-align: center;
+   font-size: 15px;
+}
+
+#search + div > button:hover {
+    background: gray;
+}
+
+#searchIcon {
+    width: 4vmax;
+    min-width: 50px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0px 20px 20px 0px;
+    outline: 0.1px solid #222222;
+    /* background-color: #222222; */
+}
+
+.signInView > pre {
+    color: rgb(109, 199, 248);
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    border: 1px solid #403f3f;
+    padding: 0.5vmax;
+    border-radius: 100px;
+}
+
+.signInView > pre:hover {
+    /* background-color: red; */
+}
+
+

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import Header from "./components/layout/header/Header";
 import Footer from "./components/layout/footer/Footer";
 import "./App.css";
@@ -25,11 +25,15 @@ import ShippingPage from "./components/Order/ShippingPage";
 import CheckProduct from "./components/Order/ConfirmOrder";
 import CheckoutPayment from "./components/Order/CheckoutPayment";
 import PaymentSuccess from "./components/Order/PaymentSuccess";
+import { MenuContext } from "./context/MainContext";
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const {isDarkTheme,showHeader} = useContext(MenuContext)
+
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
+  
   useEffect(() => {
     WebFont.load({
       google: {
@@ -48,31 +52,36 @@ export default function App() {
   }, []);
 
   return (
-    <Fragment>
-      <Header />
-      <Routes>
-        <Route path="/" Component={Home}></Route>
-        <Route path="/products" Component={Products}></Route>
-        <Route path="/product/:id" Component={DetailsPage}></Route>
+    <div style={{background:"white"}} className="appContainer">
+      {
+        showHeader && <Header />
+      }
+      <div className={showHeader?"routContainer":""} >
+        <Routes>
+          <Route path="/" Component={Home}></Route>
+          {/* <Route path="/products" Component={Products}></Route>
+          <Route path="/product/:id" Component={DetailsPage}></Route> */}
 
-        {/*Only UnAuthenticated Routes */}
-        <Route path="/login" Component={LogInSignUpPage} />
-        <Route path="/forgotPassword" Component={ForgotPassword} />
-        <Route path="/passwordReset/:id" Component={PasswordReset} />
-        <Route path="/shipping" Component={ShippingPage} />
-        <Route path="/order/confirm" Component={CheckProduct} />
-        <Route path="/order/checkoutPayment" Component={CheckoutPayment} />
-        <Route path="/payment/success" Component={PaymentSuccess} />
+          {/*Only UnAuthenticated Routes */}
+          <Route path="/login" Component={LogInSignUpPage} />
+          {/* <Route path="/forgotPassword" Component={ForgotPassword} />
+          <Route path="/passwordReset/:id" Component={PasswordReset} />
+          <Route path="/shipping" Component={ShippingPage} />
+          <Route path="/order/confirm" Component={CheckProduct} />
+          <Route path="/order/checkoutPayment" Component={CheckoutPayment} />
+          <Route path="/payment/success" Component={PaymentSuccess} /> */}
 
-        {/*UnAuthenticated Routes */}
-        <Route path="/profile" Component={Profile} />
-        <Route path="/editProfile" Component={EditProfile} />
-        <Route path="/updatePassword" Component={UpdatePassword} />
-        <Route path="/myCart" Component={CartPage} />
+          {/*UnAuthenticated Routes */}
+          <Route path="/profile" Component={Profile} />
+          {/* <Route path="/editProfile" Component={EditProfile} />
+          <Route path="/updatePassword" Component={UpdatePassword} />
+          <Route path="/myCart" Component={CartPage} /> */}
 
-        <Route path="*" Component={() => <>Page Not found</>}></Route>
-      </Routes>
-      <Footer />
-    </Fragment>
+          <Route path="*" Component={() => <>Page Not found</>}></Route>
+        </Routes>
+      </div>
+    
+      {/* <Footer /> */}
+    </div>
   );
 }

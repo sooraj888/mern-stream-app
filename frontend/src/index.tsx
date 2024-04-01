@@ -10,6 +10,7 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { MenuProvider } from "./context/MainContext";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -25,7 +26,10 @@ root.render(
         <AlertProvider template={AlertTemplate} {...options}>
           <HelmetProvider>
             <Provider store={store}>
-              <App />
+              <MenuProvider>
+                <App />
+                <></>
+              </MenuProvider>
             </Provider>
           </HelmetProvider>
         </AlertProvider>

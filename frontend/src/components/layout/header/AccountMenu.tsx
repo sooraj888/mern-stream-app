@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Menu,
   MenuButton,
@@ -22,38 +22,41 @@ import { CiLogout } from "react-icons/ci";
 import { FaShoppingCart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { clearCart } from "../../../redux/cart/cart";
+import { MenuContext } from "../../../context/MainContext";
+import { MdOutlineLightMode } from "react-icons/md";
+import { MdDarkMode } from "react-icons/md";
+
 
 export default function AccountMenu({
-  children,
+  children,color,backgroundColor
 }: {
   children: React.ReactNode;
+  color?:string;
+  backgroundColor?:string;
 }) {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const onClickProfile = () => {
     navigate("/profile");
   };
-  const onClickCart = () => {
-    navigate("/myCart");
-  };
+  const onClickThemeChange = () => {
+    setTheme(prev=>!prev)
+  }
   const onClickLogout = () => {
-    dispatch(clearCart());
     dispatch(callLogoutApi({ navigate }));
   };
-  // const cartCount=useSelector((state)=>{return state})
-  const { cartItems } = useSelector((state: RootState) => state.cart);
+  const {isDarkTheme,setTheme} = useContext(MenuContext)
   return (
     <Menu>
       <MenuButton>{children}</MenuButton>
-
-      <MenuList>
-        <MenuItem onClick={onClickProfile} icon={<FaPerson />}>
+      <MenuList style={{background:backgroundColor,color:color}} mr="3.5vmax !important" mt="-35px !important" transition={"0.1s"}>
+        <MenuItem onClick={onClickProfile} style={{background:backgroundColor}} icon={<FaPerson />}>
           Profile
         </MenuItem>
-        <MenuItem onClick={onClickCart} icon={<FaShoppingCart />}>
-          <pre>Cart {`      ${cartItems.length}`}</pre>
+        <MenuItem onClick={onClickThemeChange} style={{background:backgroundColor}} icon={isDarkTheme?<MdOutlineLightMode  />: <MdDarkMode/>}>
+          {!isDarkTheme?"Dark Theme":"Light Theme"}
         </MenuItem>
-        <MenuItem onClick={onClickLogout} icon={<CiLogout />}>
+        <MenuItem onClick={onClickLogout} style={{background:backgroundColor}} icon={<CiLogout />}>
           Logout
         </MenuItem>
       </MenuList>
