@@ -26,9 +26,18 @@ CREATE TABLE IF NOT EXISTS comments (
     "commentVideoId" integer NOT NULL,
     FOREIGN KEY ("commentUserId") REFERENCES users ("userId"),
     FOREIGN KEY ("commentVideoId") REFERENCES content ("videoId")
-)
+);
 
 
 ALTER TABLE comments ADD COLUMN "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE comments ADD COLUMN "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
+
+
+CREATE TABLE IF NOT EXISTS likes(
+    "videoId" integer NOT NULL,
+    "userId" integer NOT NULL,
+    "isLike" BOOLEAN NOT NULL,
+    FOREIGN KEY ("userId") REFERENCES users ("userId"),
+    FOREIGN KEY ("videoId") REFERENCES content ("videoId")
+);

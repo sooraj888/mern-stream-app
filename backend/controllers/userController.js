@@ -174,7 +174,7 @@ exports.resetPassword = catchAsyncErrors(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-  const user = await Users.findOne({logging: console.log, where :{
+  const user = await Users.findOne({ where :{
     resetPasswordToken: req.params.token,
     resetPasswordExpire: { [Op.gt]: Date.now() },
   }});
@@ -248,7 +248,7 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
   } 
   await Users.update(updateObject,
     {
-      logging: console.log,
+      // logging: console.log,
       where: {
         userId: req.user.userId,
       },

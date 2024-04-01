@@ -11,7 +11,7 @@ const streamifier = require("streamifier");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const Validator = require('validatorjs');
-const {Op} = require('sequelize');
+const {Op, where} = require('sequelize');
 cloudinary.config({
   cloud_name: "drsqqay9m",
   api_key: "825267688972368",
@@ -20,7 +20,7 @@ cloudinary.config({
 // Create a Multer instance with a memory storage
 
 const { QueryTypes } = require('sequelize');
-const { sequelize,Content,Users, Comments } = require('../config/database');
+const { sequelize,Content,Users, Comments,Likes } = require('../config/database');
 const {hashPassword,verifyPassword} = require("../utils/password")
 
 const uploadVideo = async (file) => {
@@ -60,7 +60,7 @@ exports.uploadContent = catchAsyncErrors(async (req, res) => {
       videoTime: videoMetaData?.duration,
       videoMetaData,
       createdUserId: req.user.userId,
-    },{logging: console.log});
+    });
   } else {
     res.status(400).send('video file not found');
   }
@@ -68,13 +68,50 @@ exports.uploadContent = catchAsyncErrors(async (req, res) => {
 })
 
 exports.getContent = catchAsyncErrors(async (req, res) => {
+  const whereObj = {};
+  if (req.query.videoDetailID)
+  {
+    whereObj.videoId={[Op.not]:req.query.videoDetailID};
+  }
+  if (req.query.createdUserId) 
+  {
+    whereObj.createdUserId=req.query.createdUserId;
+  }
   const contents = await Content.findAll({
-    limit: req.query.offset || 20, 
+    limit: req.query.limit || 20, 
     offset: req.query.offset || 0,
-    include: [{
+    where: whereObj,
+    include: [
+      {
       model: Users,
-      attributes: { exclude: ['password','resetPasswordToken','resetPasswordExpire'] },
-  }],
+      attributes: { exclude: ['password','resetPasswordToken','resetPasswordExpire','createdAt','updatedAt'] },
+      }
+    ],
+    attributes: { exclude: ['videoMetaData'] }
+  });
+  res.status(200).json({success:true,contents});
+})
+
+exports.searchContent = catchAsyncErrors(async (req, res) => {
+  const contents = await Content.findAll({
+    limit: req.query.limit || 20, 
+    offset: req.query.offset || 0,
+    where: {
+      [Op.or]: [
+        { 'title': {  [Op.like]: '%' + req.params.search + '%' } },
+        { 'description': {  [Op.like]: '%' + req.params.search + '%' } },
+        { '$user.userName$': {  [Op.like]: '%' + req.params.search + '%' } },
+      ]
+    },
+    include: [
+      {
+      model: Users,
+      as: 'user',
+      attributes: { exclude: ['password','resetPasswordToken','resetPasswordExpire','createdAt','updatedAt'] },
+      }
+    ],
+    attributes: { exclude: ['videoMetaData'] },
+    logging:console.log
   });
   res.status(200).json({success:true,contents});
 })
@@ -92,6 +129,29 @@ exports.getContentDetails = catchAsyncErrors(async (req, res) => {
   res.status(200).json({success:true,contentDetails});
 });
 
+exports.updateViewCount =  catchAsyncErrors(async (req, res) => {
+  const data = req.body;
+  const rules = {
+    videoId: 'required',
+  };
+  const validation = new Validator(data, rules);
+  if (validation.fails()) {
+    return res.status(400).json({ errors: validation.errors.all() });
+  }
+  const replacements = {
+    "videoId": data.videoId,
+    // Add more dynamic values here
+  };
+  const contentDetails = await Content.update({
+    'totalViews': sequelize.literal('"totalViews" + 1') 
+  },{
+    where: {videoId:replacements.videoId},
+  });
+  if (!contentDetails) {
+    return res.status(400).json({ success: false, message: "View is not updated" });
+  }
+  res.status(200).json({success:true,contentDetails});
+});
 
 exports.getComments = catchAsyncErrors(async (req, res) => {
   const comments = await Comments.findAll({
@@ -127,3 +187,57 @@ exports.addComment = catchAsyncErrors(async (req, res) => {
   });
   res.status(200).json({success:true,message: "Comment added successfully"});
 })
+
+exports.getLike = catchAsyncErrors(async (req, res) => {
+  const data = req.query;
+  const rules = {
+    videoId: 'required',
+  };
+  const validation = new Validator(data, rules);
+  if (validation.fails()) {
+    return res.status(400).json({ errors: validation.errors.all() });
+  }
+
+  const totalLikes = await Likes.count({ where : {videoId:data.videoId,isLike:true}});
+  const totalDisLikes = await Likes.count({ where : {videoId:data.videoId,isLike:false}});
+  let isUserLikeOrDisLike = null;
+  if (req.user) {
+    const isLiked = await Likes.findOne({ where : {videoId:data.videoId,userId:req.user.userId}});
+    if(isLiked)
+    {
+      isUserLikeOrDisLike = isLiked.isLike
+    }
+  }
+  const response = {success:true,totalLikes,totalDisLikes}
+  if (isUserLikeOrDisLike!=null) {
+    response.isUserLikeOrDisLike = isUserLikeOrDisLike;
+  }
+  res.status(200).json(response);
+});
+
+
+exports.addLike = catchAsyncErrors(async (req, res) => {
+  const data = req.body;
+  const rules = {
+    videoId: 'required',
+    isLike: 'required|boolean',
+    deleteLikeDisLike: "boolean"
+  };
+  const validation = new Validator(data, rules);
+  if (validation.fails()) {
+    return res.status(400).json({ errors: validation.errors.all() });
+  }
+  const isAlreadyLiked =await Likes.findOne({where: {videoId:data.videoId,userId:req.user.userId }})
+  if (data?.deleteLikeDisLike) {
+    await Likes.destroy({where : {videoId:data.videoId,userId:req.user.userId}});
+  } else {
+    if (isAlreadyLiked?.userId) { 
+      await Likes.update({isLike:data.isLike }, {where : {videoId:data.videoId,userId:req.user.userId}});
+    } else {
+      await Likes.create({videoId:data.videoId,isLike:data.isLike,userId:req.user.userId });
+    }
+  }
+  
+  const response = {success:true}
+  res.status(200).json(response);
+});

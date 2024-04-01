@@ -9,8 +9,20 @@ const sequelize = new Sequelize(localDB,{
     //   ssl: {
     //     rejectUnauthorized: false,
     //   } 
-    // }
-    logging: console.log 
+    // },
+    define: {
+      scopes: {
+       excludeCreatedAtUpdateAtId: {
+         attributes: { exclude: ['id','createdAt', 'updatedAt'] }
+       }
+      },
+      timestamps: false 
+   },
+    dialect: 'postgres',
+    logging: false,
+    // logging: console.log,
+    // logQueryParameters: true,
+   
 })
 
 const Users = sequelize.define('users', {
@@ -165,6 +177,37 @@ Users.prototype.getResetPasswordToken = function () {
   Comments.belongsTo(Users, { foreignKey: 'commentUserId' });
   Comments.belongsTo(Content, { foreignKey: 'commentVideoId' });
 
+  
+  const Likes = sequelize.define("likes", {
+    userId: {
+      type: DataTypes.NUMERIC,
+      references: {
+        model: 'users',
+        key: 'userId'
+      },
+      allowNull: false,
+    },
+    videoId: {
+      type: DataTypes.NUMERIC,
+      references: {
+        model: 'contents',
+        key: 'videoId'
+      },
+      allowNull: false,
+    },
+    isLike: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+  },{
+    freezeTableName: true,
+  });
+  Comments.belongsTo(Users, { foreignKey: 'userId' });
+  Comments.belongsTo(Content, { foreignKey: 'videoId' });
+  Likes.removeAttribute('id');
+  Likes.removeAttribute('updatedAt');
+  Likes.removeAttribute('createdAt');
+
 const connectToDB = async () => {
   try {
     await sequelize.authenticate(); 
@@ -178,4 +221,4 @@ const connectToDB = async () => {
 
 
 
-module.exports = {connectToDB,sequelize,Users,Content,Comments};
+module.exports = {connectToDB,sequelize,Users,Content,Comments,Likes};
