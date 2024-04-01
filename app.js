@@ -12,19 +12,16 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 //Route Imports
-const product = require("./backend/routes/productRoute");
 const user = require("./backend/routes/userRoute");
-const order = require("./backend/routes/orderRoute");
-const payment = require("./backend/routes/paymentRoute");
+
 const content =  require("./backend/routes/contentRoute");
 
 app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-// app.use("/api/v1", product);
+
 app.use("/api/v1", user);
 app.use("/api/v1",content);
-// app.use("/api/v1", order);
-// app.use("/api/v1", payment);
+
 
 app.get("*", (req, res) => {
   res.sendFile(path.resolve("frontend", "build", "index.html"));
