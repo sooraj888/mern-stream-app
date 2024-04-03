@@ -7,7 +7,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./components/Home/Home";
 import { Provider } from "react-redux";
 import store, { AppDispatch, RootState } from "./redux/store";
-import DetailsPage from "./components/Product/ProductDetailsPage";
+import DetailsPage from "./components/VideoDetails/index";
 import Products from "./components/Product/ProductPage";
 import Search from "./components/layout/header/Search";
 import { ChakraProvider } from "@chakra-ui/react";
@@ -52,21 +52,22 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{background:"white"}} className="appContainer">
+    <div style={{background:isDarkTheme?"black":"white"}} className="appContainer">
       {
         showHeader && <Header />
       }
       <div className={showHeader?"routContainer":""} >
         <Routes>
           <Route path="/" Component={Home}></Route>
+          <Route path="/video/:id" Component={DetailsPage}></Route>
           {/* <Route path="/products" Component={Products}></Route>
           <Route path="/product/:id" Component={DetailsPage}></Route> */}
 
           {/*Only UnAuthenticated Routes */}
           <Route path="/login" Component={LogInSignUpPage} />
-          {/* <Route path="/forgotPassword" Component={ForgotPassword} />
+          <Route path="/forgotPassword" Component={ForgotPassword} />
           <Route path="/passwordReset/:id" Component={PasswordReset} />
-          <Route path="/shipping" Component={ShippingPage} />
+          {/* <Route path="/shipping" Component={ShippingPage} />
           <Route path="/order/confirm" Component={CheckProduct} />
           <Route path="/order/checkoutPayment" Component={CheckoutPayment} />
           <Route path="/payment/success" Component={PaymentSuccess} /> */}
