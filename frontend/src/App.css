@@ -2,6 +2,11 @@
   padding: 0px;
   margin: 0px;
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
 h1,
 h1,
 h3,
@@ -42,4 +47,13 @@ input[type="number"] {
 
 .routContainer {
   padding-top: 60px;
+}
+
+.dot {
+  height: 5px;
+  width: 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0px 10px;
 }

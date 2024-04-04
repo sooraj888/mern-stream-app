@@ -26,14 +26,15 @@ import CheckProduct from "./components/Order/ConfirmOrder";
 import CheckoutPayment from "./components/Order/CheckoutPayment";
 import PaymentSuccess from "./components/Order/PaymentSuccess";
 import { MenuContext } from "./context/MainContext";
+import { ScrollRestoration } from "react-router-dom";
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const {isDarkTheme,showHeader} = useContext(MenuContext)
+  const { isDarkTheme, showHeader } = useContext(MenuContext);
 
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
-  
+
   useEffect(() => {
     WebFont.load({
       google: {
@@ -52,11 +53,15 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{background:isDarkTheme?"black":"white"}} className="appContainer">
-      {
-        showHeader && <Header />
-      }
-      <div className={showHeader?"routContainer":""} >
+    <div
+      style={{
+        background: isDarkTheme ? "black" : "white",
+        color: !isDarkTheme ? "black" : "white",
+      }}
+      className="appContainer"
+    >
+      {showHeader && <Header />}
+      <div className={showHeader ? "routContainer" : ""}>
         <Routes>
           <Route path="/" Component={Home}></Route>
           <Route path="/video/:id" Component={DetailsPage}></Route>
@@ -81,7 +86,7 @@ export default function App() {
           <Route path="*" Component={() => <>Page Not found</>}></Route>
         </Routes>
       </div>
-    
+
       {/* <Footer /> */}
     </div>
   );

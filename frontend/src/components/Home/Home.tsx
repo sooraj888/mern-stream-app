@@ -9,7 +9,7 @@ import Loader from "../layout/Loader/Loader";
 import { useAlert } from "react-alert";
 import ProductCard from "./ProductCard";
 
-import ReactPlayer from 'react-player'
+import ReactPlayer from "react-player";
 import VideoList from "../VideoList";
 
 export default function Home() {
@@ -22,18 +22,10 @@ export default function Home() {
   useEffect((): any => {
     if (error) {
       bottomAlert.error(errorMessage);
-      return ;
+      return;
     }
     dispatch(getAllProducts({}));
   }, [dispatch, error, bottomAlert]);
-  
-  return (
-    <>
-      {loading ? (
-        <Loader />
-      ) : (
-      <VideoList/>
-      )}
-    </>
-  );
+
+  return <>{loading ? <Loader /> : <VideoList />}</>;
 }
