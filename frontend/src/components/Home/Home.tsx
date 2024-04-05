@@ -27,5 +27,15 @@ export default function Home() {
     dispatch(getAllProducts({}));
   }, [dispatch, error, bottomAlert]);
 
-  return <>{loading ? <Loader /> : <VideoList />}</>;
+  return (
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div style={{ width: 900 }}>
+          <VideoList />
+        </div>
+      )}
+    </>
+  );
 }
