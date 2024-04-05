@@ -32,7 +32,7 @@ export default function Home() {
       {loading ? (
         <Loader />
       ) : (
-        <div style={{ width: 900 }}>
+        <div>
           <VideoList />
         </div>
       )}

@@ -64,7 +64,7 @@ export default function App() {
       <div className={showHeader ? "routContainer" : ""}>
         <Routes>
           <Route path="/" Component={Home}></Route>
-          <Route path="/video/:id" Component={DetailsPage}></Route>
+          <Route path="/video" Component={DetailsPage}></Route>
           {/* <Route path="/products" Component={Products}></Route>
           <Route path="/product/:id" Component={DetailsPage}></Route> */}
 

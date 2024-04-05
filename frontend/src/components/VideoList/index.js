@@ -1,27 +1,30 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./VideoList.css";
 import { contents } from "./data";
 import { useNavigate } from "react-router-dom";
 import { MenuContext } from "../../context/MainContext";
 import { ago, convertSecondsToTime } from "../../utils/util";
-import { Avatar } from "@chakra-ui/react";
+import { Avatar, useEditable } from "@chakra-ui/react";
 
 export default function VideoList() {
   const navigation = useNavigate();
   const { isDarkTheme } = useContext(MenuContext);
 
   const onClickUser = (userId) => {
-    navigation(`/user/${userId}`, { state: { preserveScroll: true } });
+    navigation(`/user/${userId}`, { state: { preserveScroll: false } });
   };
 
   const onClickVideo = (videoId) => {
-    navigation(`/video/${videoId}`, { state: { preserveScroll: true } });
+    navigation(`/video?v=${videoId}`, {
+      preventScrollReset: false,
+    });
   };
+
   return (
-    <div className="container">
+    <div className="containerVideo">
       <div className="videoListContainer">
         {contents.map((video, key) => {
-          if (key >= 50) {
+          if (key >= 10) {
             return;
           }
           return (

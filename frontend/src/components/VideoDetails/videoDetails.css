@@ -1,0 +1,57 @@
+.videoDetailsContainer {
+  container-type: inline-size;
+}
+
+.subVideoDetailsContainer {
+  padding: 2vmax;
+  display: flex;
+}
+
+.playerContainer {
+  width: 60vw;
+  height: auto;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.playerContainer + h1 {
+  text-transform: capitalize;
+  font-size: large;
+  font-weight: bolder;
+}
+.videoDetailsList {
+  width: 40vw;
+  height: auto;
+}
+
+.videoDetailsOwner {
+  display: flex;
+  align-items: center;
+}
+
+.videoDetailsOwner > h2 {
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.videoDetailsAv {
+  cursor: pointer;
+}
+
+@container (max-width:1000px) {
+  .playerContainer {
+    width: 100%;
+  }
+  .subVideoDetailsContainer {
+    padding: 2px;
+  }
+  .playerContainer {
+    border-radius: 0px;
+  }
+  .subVideoDetailsContainer {
+    flex-direction: column;
+  }
+  .videoDetailsList {
+    width: 100vw;
+  }
+}

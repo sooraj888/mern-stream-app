@@ -6,7 +6,7 @@
   padding-left: 10px;
   padding-right: 10px;
 }
-.container {
+.containerVideo {
   container-type: inline-size;
   width: inherit;
 }
@@ -92,11 +92,11 @@
   /* flex-direction: ; */
 }
 
-@container (max-width: 3500px) {
+/* @container (max-width: 3500px) {
   .videoListContainer {
     grid-template-columns: repeat(8, 1fr);
   }
-}
+} */
 
 @container (max-width: 3000px) {
   .videoListContainer {
