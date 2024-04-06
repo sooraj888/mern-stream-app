@@ -21,8 +21,12 @@
 .videoDetailsList {
   width: 40vw;
   height: auto;
+  padding: 5px 0.5rem;
 }
-
+.videoDetailsListSubContainer {
+  width: 100%;
+  height: 100%;
+}
 .videoDetailsOwner {
   display: flex;
   align-items: center;
@@ -36,6 +40,57 @@
 
 .videoDetailsAv {
   cursor: pointer;
+}
+
+.videoDetailsListItem {
+  display: flex;
+  margin-bottom: 0.6vmax;
+}
+
+.videoDetailsListImgContainer {
+  width: 35%;
+  /* height: 8vmax; */
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-right: 5px;
+}
+
+.videoDetailsItemThumbnail {
+  width: 100%;
+  height: 100%;
+}
+
+.videoDetailsListDetails {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+
+.videoDetailsListImgContainer > span {
+  z-index: 2;
+  position: absolute;
+  right: 5px;
+  bottom: 0px;
+  color: white;
+  font-size: x-small;
+  font-weight: 600;
+  padding: 1px 0.1vmax;
+  background: rgba(12, 12, 12, 0.739);
+  margin: 5px 0px;
+  border-radius: 5px;
+}
+
+.videoDetailsListDetails > span > p > h3 {
+  font-weight: 600;
+  max-height: 2;
+  display: block;
+  overflow: hidden;
+  font-size: small;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  max-height: 3.4em; /* 1.7em * 2 = 3.4em */
+  line-height: 1.7em;
 }
 
 @container (max-width:1000px) {
@@ -53,5 +108,7 @@
   }
   .videoDetailsList {
     width: 100vw;
+    padding: 2px;
+    margin: 1vmax 0px;
   }
 }

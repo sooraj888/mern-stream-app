@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import ReactPlayer from "react-player";
 import "./videoDetails.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Avatar } from "@chakra-ui/react";
-import { ago } from "../../utils/util";
+import { ago, convertSecondsToTime } from "../../utils/util";
+import { contents } from "../VideoList/data";
+import { MenuContext } from "../../context/MainContext";
 
 export default function VideoDetails() {
   const [searchParams] = useSearchParams();
-  const tutorial = searchParams.get("v");
+  const videoId = searchParams.get("v");
   const navigation = useNavigate();
+  const { isDarkTheme } = useContext(MenuContext);
 
-  if (!tutorial) {
+  if (!videoId) {
     navigation(`/`);
   }
 
@@ -18,8 +21,9 @@ export default function VideoDetails() {
     navigation(`/user/${userId}`, { state: { preserveScroll: false } });
   };
 
-  const onClickVideo = (videoId) => {
-    navigation(`/video?v=${videoId}`, {
+  const onClickVideo = (id) => {
+    window.scrollTo(0, 0);
+    navigation(`/video?v=${id}`, {
       preventScrollReset: false,
     });
   };
@@ -30,7 +34,7 @@ export default function VideoDetails() {
         <div>
           <div className="playerContainer">
             <ReactPlayer
-              url={data.videoUrl}
+              url={contents.find((item) => item.videoId == videoId)?.videoUrl}
               controls
               playing
               className={"videoPlyer"}
@@ -65,17 +69,66 @@ export default function VideoDetails() {
             </h2>
           </div>
         </div>
-        <div className="videoDetailsList">sfhk{tutorial}</div>
+        <div className="videoDetailsList">
+          <div className="videoDetailsListSubContainer">
+            {contents.map((video, key) => {
+              if (key >= 10) {
+                return;
+              }
+              return (
+                <div
+                  style={{
+                    background: isDarkTheme ? "black" : "white",
+                    color: !isDarkTheme ? "black" : "white",
+                  }}
+                  className="videoDetailsListItem"
+                  key={key}
+                  onClick={() => {
+                    onClickVideo(video.videoId);
+                  }}
+                >
+                  <div className="videoDetailsListImgContainer">
+                    <img
+                      src={video.thumbnail}
+                      className="videoDetailsItemThumbnail"
+                    ></img>
+                    <span>{convertSecondsToTime(video.videoTime)}</span>
+                  </div>
+                  <div className="videoDetailsListDetails">
+                    <span>
+                      <p>
+                        <h3>{video.title}</h3>
+                      </p>
+                      <p
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onClickUser(video.user.userId);
+                        }}
+                        style={{
+                          color: "gray",
+                          fontSize: "small",
+                          fontWeight: "600",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {video.user.userName.slice(0, 80)}
+                      </p>
+                      <span className="viewsCreatedAt">
+                        {video.totalViews} Views <span class="dot"></span>
+                        {ago(video.createdAt)}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-{
-  /* <span className="viewsCreatedAt">
-                {data.totalViews} Views <span class="dot"></span>
-                {ago(data.createdAt)}
-              </span> */
-}
+
 const data = {
   videoId: 2,
   title: "my first video steam app",
