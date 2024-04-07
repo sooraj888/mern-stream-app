@@ -12,6 +12,7 @@ import { BiSolidDislike } from "react-icons/bi";
 import { BiSolidLike } from "react-icons/bi";
 import { PiShareFatLight } from "react-icons/pi";
 import { useAlert } from "react-alert";
+import Comments from "./Comments";
 
 export default function VideoDetails() {
   const [searchParams] = useSearchParams();
@@ -144,6 +145,13 @@ export default function VideoDetails() {
               </span>
             </span>
           </div>
+          <div className="commentContainer">
+            <Comments
+              commentId={
+                contents.find((item) => item.videoId == videoId)?.videoId
+              }
+            />
+          </div>
         </div>
 
         <div className="videoDetailsList">
@@ -186,6 +194,7 @@ export default function VideoDetails() {
                           fontSize: "small",
                           fontWeight: "600",
                           textTransform: "capitalize",
+                          display: "inline-block",
                         }}
                       >
                         {video.user.userName.slice(0, 80)}
@@ -201,6 +210,11 @@ export default function VideoDetails() {
             })}
           </div>
         </div>
+      </div>
+      <div className="commentBottomContainer">
+        <Comments
+          commentId={contents.find((item) => item.videoId == videoId)?.videoId}
+        />
       </div>
     </div>
   );

@@ -70,7 +70,7 @@
 
 .videoDetailsItemThumbnail {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 10;
 }
 
 .videoDetailsListDetails {
@@ -101,9 +101,14 @@
   font-size: small;
   text-overflow: ellipsis;
   word-wrap: break-word;
-  max-height: 3.4em; /* 1.7em * 2 = 3.4em */
+  max-height: 3.4em;
   line-height: 1.7em;
   text-transform: capitalize;
+  /* min-height: 3.4em; */
+}
+
+.userInputSubContainer {
+  display: flex;
 }
 
 .likeContainer {
@@ -167,6 +172,12 @@
   padding: 0px 5px;
   text-align: center;
 }
+.commentBottomContainer {
+  display: none;
+}
+.commentContainer {
+  margin-top: 1vmax;
+}
 
 @container (max-width:1000px) {
   .playerContainer {
@@ -185,5 +196,29 @@
     width: 100vw;
     padding: 2px;
     margin: 1vmax 0px;
+  }
+  .videoDetailsOwner {
+    flex-direction: column;
+    align-items: initial;
+  }
+  .videoDetailsOwner > span:nth-child(1) {
+    width: 100%;
+    margin: 8px auto;
+  }
+
+  .videoDetailsOwner > span:nth-child(2) {
+    width: 100%;
+  }
+  svg {
+    font-size: medium;
+  }
+  .videoDetailsListDetails > span > p > h3 {
+    max-height: 1.7em;
+  }
+  .commentContainer {
+    display: none;
+  }
+  .commentBottomContainer {
+    display: block;
   }
 }

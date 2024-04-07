@@ -1,0 +1,50 @@
+.commentInputContainer {
+  display: flex;
+  align-items: center;
+}
+#commentInput {
+  flex: 1;
+  background: inherit;
+  color: inherit;
+  border-bottom: 1px solid;
+  outline: none;
+  padding-left: 5px;
+  width: 300px;
+  min-height: 10px;
+  max-height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.commentSubmitContainer {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.commentSubmitContainer > button {
+  margin: auto 0.5vmax;
+}
+
+.commentSubmitContainer > button:nth-child(1) {
+  padding: 0.3vmax 0.8vmax;
+  border-radius: 100px;
+}
+
+.commentSubmitContainer > button:nth-child(2) {
+  padding: 0.3vmax 0.8vmax;
+  border-radius: 100px;
+  background: rgb(63, 133, 246);
+}
+
+.commentSubmitContainer > button:nth-child(1):hover {
+  background: rgb(196, 195, 195);
+}
+
+.commentSubmitContainer > button:nth-child(2):hover {
+  background: rgb(40, 122, 255);
+}
+
+.disable {
+  background: rgb(209, 207, 207) !important;
+}
