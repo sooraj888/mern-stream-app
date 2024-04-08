@@ -7,6 +7,10 @@ import loginReducer from "./user/loginSlice";
 import forgetPasswordReducer from "./user/forgetPassword";
 import resetPasswordReducer from "./user/resetPassword";
 import cartReducer from "./cart/cart";
+import videoListSlice from "./content/videoListSlice";
+import videoDetails from "./content/videoDetails";
+import videoDetailsListSlice from "./content/videoDetailsListSlice";
+import videoDetailsLikes from "./content/videoDetailsLikes";
 
 // Create a root reducer by combining the slice reducers
 const rootReducer = combineReducers({
@@ -17,6 +21,10 @@ const rootReducer = combineReducers({
   resetPassword: resetPasswordReducer,
   cart: cartReducer,
   composeWithDevTools,
+  videoList: videoListSlice,
+  videoDetails,
+  videoDetailsList: videoDetailsListSlice,
+  videoDetailsLikes: videoDetailsLikes,
 });
 
 const store = configureStore({

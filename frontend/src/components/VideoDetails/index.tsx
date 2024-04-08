@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { Dispatch, useContext, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import "./videoDetails.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Avatar } from "@chakra-ui/react";
+import { Avatar, useEditable } from "@chakra-ui/react";
 import { ago, convertSecondsToTime } from "../../utils/util";
 import { contents } from "../VideoList/data";
 import { MenuContext } from "../../context/MainContext";
@@ -13,38 +13,72 @@ import { BiSolidLike } from "react-icons/bi";
 import { PiShareFatLight } from "react-icons/pi";
 import { useAlert } from "react-alert";
 import Comments from "./Comments";
+import { connect } from "react-redux";
+import { RootState } from "../../redux/store";
+import { getVideoDetails } from "../../redux/content/videoDetails";
+import { getVideoDetailsList } from "../../redux/content/videoDetailsListSlice";
+import {
+  callChangeLikeStatusApi,
+  changeLikeStatus,
+  getVideoDetailsLikes,
+} from "../../redux/content/videoDetailsLikes";
 
-export default function VideoDetails() {
+const VideoDetails = ({
+  getVideoList,
+  video,
+  getVideoDetailsList,
+  videoDetailsList,
+  videoDetailsLikes,
+  getVideoDetailsLikes,
+  changeLikeStatus,
+  myLike,
+  loggedUser,
+}: {
+  getVideoList: any;
+  video: any;
+  getVideoDetailsList: any;
+  videoDetailsList: any;
+  videoDetailsLikes: any;
+  getVideoDetailsLikes: any;
+  changeLikeStatus: any;
+  myLike: boolean | null;
+  loggedUser: RootState["login"];
+}) => {
   const [searchParams] = useSearchParams();
   const videoId = searchParams.get("v");
   const navigation = useNavigate();
   const { isDarkTheme } = useContext(MenuContext);
-  const [isLiked, setIsLiked] = useState(null);
+
   const bottomAlert = useAlert();
 
   if (!videoId) {
     navigation(`/`);
   }
 
-  const onClickUser = (userId) => {
+  const onClickUser = (userId: number) => {
     navigation(`/user/${userId}`, { state: { preserveScroll: false } });
   };
 
-  const onClickVideo = (id) => {
+  const onClickVideo = (id: number) => {
     window.scrollTo(0, 0);
     navigation(`/video?v=${id}`, {
       preventScrollReset: false,
     });
   };
 
-  const onclickLikeDisLike = (isLike) => {
-    setIsLiked((prev) => {
-      if (prev == isLike) {
-        return null;
-      } else {
-        return isLike;
-      }
-    });
+  const onclickLikeDisLike = (isLike: boolean | null) => {
+    if (!loggedUser.isAuthenticated) {
+      alert("Please Login to your account to make any changes");
+      return;
+    }
+    if (!video?.videoId) {
+      return;
+    }
+    if (myLike == isLike) {
+      changeLikeStatus(null, video?.videoId);
+    } else {
+      changeLikeStatus(isLike, video?.videoId);
+    }
   };
 
   const handleOnShare = async () => {
@@ -55,13 +89,25 @@ export default function VideoDetails() {
     });
   };
 
+  useEffect(() => {
+    getVideoList(videoId);
+    getVideoDetailsList(videoId);
+    getVideoDetailsLikes(videoId);
+  }, [videoId]);
+
+  // useEffect(() => {
+  //   if (videoDetailsLikes?.isUserLikeOrDisLike != null) {
+  //     setIsLiked(videoDetailsLikes?.isUserLikeOrDisLike);
+  //   }
+  // }, [videoDetailsLikes.isUserLikeOrDisLike]);
+
   return (
     <div className="videoDetailsContainer">
       <div className="subVideoDetailsContainer">
-        <div>
+        <div className="leftContainer">
           <div className="playerContainer">
             <ReactPlayer
-              url={contents.find((item) => item.videoId == videoId)?.videoUrl}
+              url={video?.videoUrl || window.location.href}
               controls
               playing
               className={"videoPlyer"}
@@ -69,30 +115,30 @@ export default function VideoDetails() {
               height={"auto"}
             />
           </div>
-          <h1>{data.title}</h1>
+          <h1>{video.title}</h1>
           <div className="videoDetailsOwner">
             <span>
               <Avatar
                 onClick={(e) => {
                   e.stopPropagation();
-                  onClickUser(data.user.userId);
+                  onClickUser(video.user.userId);
                 }}
                 className="videoDetailsAv"
                 size={"sm"}
-                name={String(data.user?.name || "")}
-                src={String(data.user?.avatar?.url)}
+                name={String(video.user?.userName || "")}
+                src={String(video.user?.avatar?.url)}
               />
               <h2
                 onClick={(e) => {
                   e.stopPropagation();
-                  onClickUser(data.user.userId);
+                  onClickUser(video.user.userId);
                 }}
                 style={{
                   fontWeight: "600",
                   textTransform: "capitalize",
                 }}
               >
-                {data.user.userName}
+                {video?.user?.userName}
               </h2>
             </span>
             <span className="userInputSubContainer">
@@ -107,8 +153,10 @@ export default function VideoDetails() {
                       : "rgb(230, 230, 230)",
                   }}
                 >
-                  {isLiked ? <BiSolidLike /> : <BiLike />}
-                  <pre className="prevent-select">{123}</pre>
+                  {myLike ? <BiSolidLike /> : <BiLike />}
+                  <pre className="prevent-select">
+                    {videoDetailsLikes?.totalLikes}
+                  </pre>
                 </span>
                 <div>
                   <div></div>
@@ -123,12 +171,14 @@ export default function VideoDetails() {
                       : "rgb(230, 230, 230)",
                   }}
                 >
-                  {!isLiked && isLiked != null ? (
+                  {!myLike && myLike != null ? (
                     <BiSolidDislike />
                   ) : (
                     <BiDislike />
                   )}
-                  <pre className="prevent-select">{123}</pre>
+                  <pre className="prevent-select">
+                    {videoDetailsLikes?.totalDisLikes}
+                  </pre>
                 </span>
               </span>
               <span
@@ -148,7 +198,8 @@ export default function VideoDetails() {
           <div className="commentContainer">
             <Comments
               commentId={
-                contents.find((item) => item.videoId == videoId)?.videoId
+                contents.find((item: any) => item?.videoId == videoId)
+                  ?.videoId || NaN
               }
             />
           </div>
@@ -156,10 +207,7 @@ export default function VideoDetails() {
 
         <div className="videoDetailsList">
           <div className="videoDetailsListSubContainer">
-            {contents.map((video, key) => {
-              if (key >= 10) {
-                return;
-              }
+            {videoDetailsList?.map((video: any, key: number) => {
               return (
                 <div
                   style={{
@@ -197,10 +245,10 @@ export default function VideoDetails() {
                           display: "inline-block",
                         }}
                       >
-                        {video.user.userName.slice(0, 80)}
+                        {video?.user?.userName.slice(0, 80)}
                       </p>
                       <span className="viewsCreatedAt">
-                        {video.totalViews} Views <span class="dot"></span>
+                        {video.totalViews} Views <span className="dot"></span>
                         {ago(video.createdAt)}
                       </span>
                     </span>
@@ -213,86 +261,40 @@ export default function VideoDetails() {
       </div>
       <div className="commentBottomContainer">
         <Comments
-          commentId={contents.find((item) => item.videoId == videoId)?.videoId}
+          commentId={
+            contents.find((item: any) => item?.videoId == videoId)?.videoId ||
+            NaN
+          }
         />
       </div>
     </div>
   );
-}
-
-const data = {
-  videoId: 2,
-  title: "my first video steam app",
-  createdAt: "2024-03-19T20:02:41.715Z",
-  updatedAt: "2024-03-19T20:02:41.716Z",
-  description: "mm",
-  thumbnail:
-    "https://res.cloudinary.com/drsqqay9m/video/upload/v1710878560/fo8a8vokddirmswuuwfk.png",
-  videoUrl:
-    "https://res.cloudinary.com/drsqqay9m/video/upload/sp_auto/v1710878560/fo8a8vokddirmswuuwfk.m3u8",
-  videoTime: "5.312",
-  likes: "0",
-  dislikes: "0",
-  videoMetaData: {
-    url: "http://res.cloudinary.com/drsqqay9m/video/upload/v1710878560/fo8a8vokddirmswuuwfk.mp4",
-    etag: "d55bddf8d62910879ed9f605522149a8",
-    tags: [],
-    type: "upload",
-    audio: {
-      codec: "aac",
-      bit_rate: "384828",
-      channels: 6,
-      frequency: 48000,
-      channel_layout: "5.1",
-    },
-    bytes: 1055736,
-    pages: 0,
-    video: {
-      dar: "16:9",
-      codec: "h264",
-      level: 31,
-      profile: "Main",
-      bit_rate: "1205959",
-      time_base: "1/12800",
-      pix_format: "yuv420p",
-    },
-    width: 1280,
-    folder: "",
-    format: "mp4",
-    height: 720,
-    api_key: "825267688972368",
-    version: 1710878560,
-    asset_id: "47afd2f5c0e402e37ca54cb308802d8a",
-    bit_rate: 1589963,
-    duration: 5.312,
-    is_audio: false,
-    rotation: 0,
-    nb_frames: 132,
-    public_id: "fo8a8vokddirmswuuwfk",
-    signature: "23c37e821c818ebf79298f354f7e505a0f0c7883",
-    created_at: "2024-03-19T20:02:40Z",
-    frame_rate: 25,
-    secure_url:
-      "https://res.cloudinary.com/drsqqay9m/video/upload/v1710878560/fo8a8vokddirmswuuwfk.mp4",
-    version_id: "090f1a4a7db83d5bf2ed4d24d1781bbd",
-    access_mode: "public",
-    placeholder: false,
-    playback_url:
-      "https://res.cloudinary.com/drsqqay9m/video/upload/sp_auto/v1710878560/fo8a8vokddirmswuuwfk.m3u8",
-    resource_type: "video",
-    original_filename: "file",
-  },
-  totalViews: "85",
-  createdUserId: 12,
-  user: {
-    userId: 12,
-    userName: "sooraj",
-    createdAt: "2024-03-19T14:20:31.091Z",
-    updatedAt: "2024-03-19T14:20:31.092Z",
-    email: "soorajsagar8888@gmail.com",
-    avatar: {
-      url: "https://res.cloudinary.com/drsqqay9m/image/upload/v1710858030/file_kpviq2.jpg",
-      public_id: "file_kpviq2",
-    },
-  },
 };
+
+const mapStateToProps = (state: RootState) => {
+  return {
+    video: state.videoDetails.videoDetails,
+    videoDetailsList: state.videoDetailsList.containsList,
+    videoDetailsLikes: state.videoDetailsLikes,
+    myLike: state.videoDetailsLikes.isUserLikeOrDisLike,
+    loggedUser: state.login,
+  };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  getVideoList: (videoId: number) => {
+    dispatch(getVideoDetails({ id: videoId }));
+  },
+  getVideoDetailsList: (videoId: number) => {
+    dispatch(getVideoDetailsList({ videoDetailID: videoId }));
+  },
+  getVideoDetailsLikes: (videoId: number) => {
+    dispatch(getVideoDetailsLikes({ videoId }));
+  },
+  changeLikeStatus: (like: boolean | null, videoId: number) => {
+    dispatch(changeLikeStatus({ like }));
+    dispatch(callChangeLikeStatusApi({ videoId, like }));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(VideoDetails);

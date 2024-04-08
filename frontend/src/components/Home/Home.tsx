@@ -1,8 +1,8 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Dispatch, Fragment, useEffect, useState } from "react";
 // import {CgMouse} from "react-icons/all"
 import "./Home.css";
 import Title from "../layout/header/Title";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { useNavigate, useNavigation } from "react-router-dom";
 import { getAllProducts } from "../../redux/product/productSlice";
 import Loader from "../layout/Loader/Loader";
@@ -11,31 +11,45 @@ import ProductCard from "./ProductCard";
 
 import ReactPlayer from "react-player";
 import VideoList from "../VideoList";
+import { RootState } from "../../redux/store";
+import { getVideoList } from "../../redux/content/videoListSlice";
+import { Action } from "@reduxjs/toolkit";
 
-export default function Home() {
-  const { products, productCount, loading, error, errorMessage } = useSelector(
-    (state: any) => state.products
-  );
-  const dispatch = useDispatch<any>();
-  const bottomAlert = useAlert();
-
-  useEffect((): any => {
-    if (error) {
-      bottomAlert.error(errorMessage);
-      return;
+const Home = ({
+  videos,
+  getVideoList,
+}: {
+  videos: RootState["videoList"];
+  getVideoList: () => void;
+}) => {
+  useEffect(() => {
+    if (videos && videos?.containsList?.length > 1) {
+    } else {
+      getVideoList();
     }
-    dispatch(getAllProducts({}));
-  }, [dispatch, error, bottomAlert]);
+  }, []);
 
   return (
     <>
-      {loading ? (
+      {videos.loading ? (
         <Loader />
       ) : (
         <div>
-          <VideoList />
+          <VideoList videos={videos?.containsList} />
         </div>
       )}
     </>
   );
-}
+};
+
+const mapStateToProps = (state: RootState) => {
+  return { videos: state.videoList };
+};
+
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+  getVideoList: () => {
+    dispatch(getVideoList({}));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

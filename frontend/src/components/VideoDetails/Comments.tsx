@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import "./Comments.css";
 import { Avatar } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { ago } from "../../utils/util";
 export default function Comments({ commentId }: { commentId: number }) {
   const [commentText, setCommentText] = useState("");
+  const navigation = useNavigate();
   const onChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentText(e.target.value);
   };
+
+  const onClickUser = (userId: number) => {
+    navigation(`/user/${userId}`, { state: { preserveScroll: false } });
+  };
+
   return (
-    <div>
+    <div style={{ width: "inherit" }}>
       <div className="commentInputContainer">
         <Avatar
           onClick={(e) => {
@@ -42,6 +50,49 @@ export default function Comments({ commentId }: { commentId: number }) {
         >
           Comment
         </button>
+      </div>
+      <div>
+        {commentsD.map((item) => {
+          return (
+            <div className="commentItem">
+              <Avatar
+                onClick={(e) => {
+                  //   e.stopPropagation();
+                  onClickUser(data.user.userId);
+                }}
+                className="videoDetailsAv"
+                size={"sm"}
+                name={String(item.user?.userName || "")}
+                src={String(item.user?.avatar?.url)}
+              />
+              <div>
+                <div className="commentUserContainer">
+                  <b>@{item.user?.userName}</b>
+                  <span>{ago(item.createdAt)}</span>
+                </div>
+                <span>
+                  {item.commentMessage}asdfak fasdf a sdf as dfhas df asd hfkash
+                  df asdfak fasdf a sdf as dfhas df asd hfkash df a sdf as
+                  fhaskfkshdf ksahf sd fksahdfk skfhasdfak fasdf a sdf as dfhas
+                  df asd hfkash df a sdf as fhaskfkshdf ksahf sd fksahdfk
+                  skfhasdfak fasdf a sdf as dfhas df asd hfkash df a sdf as
+                  fhaskfkshdf ksahf sd fksahdfk skfhasdfak fasdf a sdf as dfhas
+                  df asd hfkash df a sdf as fhaskfkshdf ksahf sd fksahdfk
+                  skfhasdfak fasdf a sdf as dfhas df asd hfkash df a sdf as
+                  fhaskfkshdf ksahf sd fksahdfk skfhasdfak fasdf a sdf as dfhas
+                  df asd hfkash df a sdf as fhaskfkshdf ksahf sd fksahdfk
+                  skfhasdfak fasdf a sdf as dfhas df asd hfkash df a sdf as
+                  fhaskfkshdf ksahf sd fksahdfk skfhasdfak fasdf a sdf as dfhas
+                  df asd hfkash df a sdf as fhaskfkshdf ksahf sd fksahdfk
+                  skfhasdfak fasdf a sdf as dfhas df asd hfkash df a sdf as
+                  fhaskfkshdf ksahf sd fksahdfk skfhasdfak fasdf a sdf as dfhas
+                  df asd hfkash df a sdf as fhaskfkshdf ksahf sd fksahdfk skfh a
+                  sdf as fhaskfkshdf ksahf sd fksahdfk skfh
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -123,3 +174,63 @@ const data = {
     },
   },
 };
+
+const commentsD = [
+  {
+    commentId: 7,
+    commentUserId: 12,
+    commentMessage: "loooo",
+    commentVideoId: 2,
+    createdAt: "2024-04-08T04:59:31.063Z",
+    updatedAt: "2024-04-08T04:59:31.063Z",
+    user: {
+      userId: 12,
+      userName: "sooraj",
+      createdAt: "2024-03-19T14:20:31.091Z",
+      updatedAt: "2024-03-19T14:20:31.092Z",
+      email: "soorajsagar8888@gmail.com",
+      avatar: {
+        url: "https://res.cloudinary.com/drsqqay9m/image/upload/v1710858030/file_kpviq2.jpg",
+        public_id: "file_kpviq2",
+      },
+    },
+  },
+  {
+    commentId: 6,
+    commentUserId: 12,
+    commentMessage: "deee",
+    commentVideoId: 2,
+    createdAt: "2024-04-08T04:41:54.940Z",
+    updatedAt: "2024-04-08T04:41:54.940Z",
+    user: {
+      userId: 12,
+      userName: "sooraj",
+      createdAt: "2024-03-19T14:20:31.091Z",
+      updatedAt: "2024-03-19T14:20:31.092Z",
+      email: "soorajsagar8888@gmail.com",
+      avatar: {
+        url: "https://res.cloudinary.com/drsqqay9m/image/upload/v1710858030/file_kpviq2.jpg",
+        public_id: "file_kpviq2",
+      },
+    },
+  },
+  {
+    commentId: 5,
+    commentUserId: 12,
+    commentMessage: "hii",
+    commentVideoId: 2,
+    createdAt: "2024-03-21T09:40:50.684Z",
+    updatedAt: "2024-03-21T09:40:50.684Z",
+    user: {
+      userId: 12,
+      userName: "sooraj",
+      createdAt: "2024-03-19T14:20:31.091Z",
+      updatedAt: "2024-03-19T14:20:31.092Z",
+      email: "soorajsagar8888@gmail.com",
+      avatar: {
+        url: "https://res.cloudinary.com/drsqqay9m/image/upload/v1710858030/file_kpviq2.jpg",
+        public_id: "file_kpviq2",
+      },
+    },
+  },
+];

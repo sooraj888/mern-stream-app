@@ -6,9 +6,12 @@
   padding: 2vmax;
   display: flex;
 }
+.leftContainer {
+  width: 60vw;
+}
 
 .playerContainer {
-  width: 60vw;
+  width: 100%;
   height: auto;
   border-radius: 15px;
   overflow: hidden;
@@ -180,8 +183,11 @@
 }
 
 @container (max-width:1000px) {
-  .playerContainer {
-    width: 100%;
+  .leftContainer {
+    width: 100vw;
+  }
+  .playerContainer + h1 {
+    padding-left: 4px;
   }
   .subVideoDetailsContainer {
     padding: 2px;
@@ -200,6 +206,7 @@
   .videoDetailsOwner {
     flex-direction: column;
     align-items: initial;
+    padding-left: 4px;
   }
   .videoDetailsOwner > span:nth-child(1) {
     width: 100%;

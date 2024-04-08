@@ -48,3 +48,20 @@
 .disable {
   background: rgb(209, 207, 207) !important;
 }
+
+.commentItem {
+  display: flex;
+}
+
+.commentUserContainer > b {
+  font-size: small;
+}
+.commentUserContainer > span {
+  font-size: x-small;
+  margin: auto 0.5em;
+  opacity: 0.5;
+}
+
+.commentUserContainer + span {
+  font-size: small;
+}
