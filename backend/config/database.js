@@ -160,7 +160,7 @@ const Comments = sequelize.define(
     commentUserId: {
       type: DataTypes.NUMERIC,
       references: {
-        model: Users,
+        model: "Users",
         key: "userId",
       },
     },
@@ -174,6 +174,14 @@ const Comments = sequelize.define(
         model: "Content",
         key: "videoId",
       },
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
   },
   {

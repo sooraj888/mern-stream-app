@@ -51,6 +51,7 @@
 
 .commentItem {
   display: flex;
+  margin: 1vmax 0px;
 }
 
 .commentUserContainer > b {

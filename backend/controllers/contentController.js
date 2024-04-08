@@ -188,6 +188,7 @@ exports.updateViewCount = catchAsyncErrors(async (req, res) => {
 exports.getComments = catchAsyncErrors(async (req, res) => {
   const comments = await Comments.findAll({
     where: { commentVideoId: req.params.id },
+    order: [["createdAt", "DESC"]],
     limit: req.query.offset || 20,
     offset: req.query.offset || 0,
     logging: console.log,
@@ -213,22 +214,36 @@ exports.addComment = catchAsyncErrors(async (req, res) => {
   const data = req.body;
   const rules = {
     commentMessage: "required",
-    commentUserId: "required",
   };
   const validation = new Validator(data, rules);
   if (validation.fails()) {
     return res.status(400).json({ errors: validation.errors.all() });
   }
-  const { commentMessage, commentUserId } = req.body;
-  console.log(commentMessage, commentUserId, req.params.id);
-  const comment = await Comments.create({
-    commentUserId,
-    commentMessage,
-    commentVideoId: req.params.id,
-  });
+  const { commentMessage } = req.body;
+
+  console.log("hii");
+  let comment = await Comments.create(
+    {
+      commentUserId: req.user.userId,
+      commentMessage,
+      commentVideoId: req.params.id,
+    },
+    {
+      include: [
+        {
+          model: Users,
+          as: "user",
+          attributes: {
+            exclude: ["password", "resetPasswordToken", "resetPasswordExpire"],
+          },
+        },
+      ],
+    }
+  );
+  comment = await comment.reload();
   res
     .status(200)
-    .json({ success: true, message: "Comment added successfully" });
+    .json({ success: true, message: "Comment added successfully", comment });
 });
 
 exports.getLike = catchAsyncErrors(async (req, res) => {

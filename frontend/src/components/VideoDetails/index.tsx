@@ -22,6 +22,7 @@ import {
   changeLikeStatus,
   getVideoDetailsLikes,
 } from "../../redux/content/videoDetailsLikes";
+import { getVideoDetailsComments } from "../../redux/content/videoDetailsComment";
 
 const VideoDetails = ({
   getVideoList,
@@ -33,6 +34,7 @@ const VideoDetails = ({
   changeLikeStatus,
   myLike,
   loggedUser,
+  getVideoDetailsComments,
 }: {
   getVideoList: any;
   video: any;
@@ -43,6 +45,7 @@ const VideoDetails = ({
   changeLikeStatus: any;
   myLike: boolean | null;
   loggedUser: RootState["login"];
+  getVideoDetailsComments: any;
 }) => {
   const [searchParams] = useSearchParams();
   const videoId = searchParams.get("v");
@@ -93,6 +96,7 @@ const VideoDetails = ({
     getVideoList(videoId);
     getVideoDetailsList(videoId);
     getVideoDetailsLikes(videoId);
+    getVideoDetailsComments(videoId);
   }, [videoId]);
 
   // useEffect(() => {
@@ -196,12 +200,7 @@ const VideoDetails = ({
             </span>
           </div>
           <div className="commentContainer">
-            <Comments
-              commentId={
-                contents.find((item: any) => item?.videoId == videoId)
-                  ?.videoId || NaN
-              }
-            />
+            <Comments commentId={video.videoId} />
           </div>
         </div>
 
@@ -215,7 +214,7 @@ const VideoDetails = ({
                     color: !isDarkTheme ? "black" : "white",
                   }}
                   className="videoDetailsListItem"
-                  key={key}
+                  key={video.videoId}
                   onClick={() => {
                     onClickVideo(video.videoId);
                   }}
@@ -260,12 +259,7 @@ const VideoDetails = ({
         </div>
       </div>
       <div className="commentBottomContainer">
-        <Comments
-          commentId={
-            contents.find((item: any) => item?.videoId == videoId)?.videoId ||
-            NaN
-          }
-        />
+        <Comments commentId={video.videoId} />
       </div>
     </div>
   );
@@ -294,6 +288,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
   changeLikeStatus: (like: boolean | null, videoId: number) => {
     dispatch(changeLikeStatus({ like }));
     dispatch(callChangeLikeStatusApi({ videoId, like }));
+  },
+  getVideoDetailsComments: (videoId: number) => {
+    dispatch(getVideoDetailsComments({ videoId }));
   },
 });
 

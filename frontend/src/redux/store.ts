@@ -11,6 +11,7 @@ import videoListSlice from "./content/videoListSlice";
 import videoDetails from "./content/videoDetails";
 import videoDetailsListSlice from "./content/videoDetailsListSlice";
 import videoDetailsLikes from "./content/videoDetailsLikes";
+import videoDetailsComment from "./content/videoDetailsComment";
 
 // Create a root reducer by combining the slice reducers
 const rootReducer = combineReducers({
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   videoDetails,
   videoDetailsList: videoDetailsListSlice,
   videoDetailsLikes: videoDetailsLikes,
+  videoDetailsComment,
 });
 
 const store = configureStore({

@@ -24,7 +24,7 @@ export default function VideoList({ videos }: { videos?: any[] }) {
     <div className="containerVideo">
       <div className="videoListContainer">
         {videos &&
-          videos.map((video, key) => {
+          videos.map((video) => {
             return (
               <div
                 style={{
@@ -32,7 +32,7 @@ export default function VideoList({ videos }: { videos?: any[] }) {
                   color: !isDarkTheme ? "black" : "white",
                 }}
                 className="videoContainer"
-                key={key}
+                key={video.videoId}
                 onClick={() => {
                   onClickVideo(video?.videoId);
                 }}
