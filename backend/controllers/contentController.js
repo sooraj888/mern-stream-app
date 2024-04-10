@@ -59,15 +59,18 @@ exports.uploadContent = catchAsyncErrors(async (req, res) => {
     videoMetaData = await uploadVideo(req.file);
     const thumbnail =
       String(videoMetaData?.secure_url).split(".mp4")[0] + ".png";
-    content = await Content.create({
-      title: data.title,
-      description: data.description,
-      thumbnail,
-      videoUrl: videoMetaData?.secure_url,
-      videoTime: videoMetaData?.duration,
-      videoMetaData,
-      createdUserId: req.user.userId,
-    });
+    content = await Content.create(
+      {
+        title: data.title,
+        description: data.description,
+        thumbnail,
+        videoUrl: videoMetaData?.secure_url,
+        videoTime: videoMetaData?.duration,
+        videoMetaData,
+        createdUserId: req.user.userId,
+      },
+      { logging: console.log }
+    );
   } else {
     res.status(400).send("video file not found");
   }
