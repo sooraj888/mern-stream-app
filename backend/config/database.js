@@ -5,12 +5,12 @@ const crypto = require("crypto");
 const localDB = "postgres://postgres:1234@127.0.0.1:5432/postgres";
 const hostedDb =
   "postgres://youtube_db_zpd3_user:IgLpd1HaQaq8nO0Z0lUNvkTCu0z87t74@dpg-cnpsl98l6cac73apiio0-a.singapore-postgres.render.com/youtube_db_zpd3";
-const sequelize = new Sequelize(localDB, {
-  // dialectOptions: {
-  //   ssl: {
-  //     rejectUnauthorized: false,
-  //   }
-  // },
+const sequelize = new Sequelize(hostedDb, {
+  dialectOptions: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
   define: {
     scopes: {
       excludeCreatedAtUpdateAtId: {
