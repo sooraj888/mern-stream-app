@@ -13,6 +13,7 @@
 .playerContainer {
   width: 100%;
   height: auto;
+  max-height: 100vh;
   border-radius: 15px;
   overflow: hidden;
 }
@@ -20,6 +21,10 @@
   text-transform: capitalize;
   font-size: large;
   font-weight: bolder;
+}
+
+.videoPlyer {
+  max-height: 100vh;
 }
 
 .small-text {

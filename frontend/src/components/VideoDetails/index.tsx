@@ -60,7 +60,7 @@ const VideoDetails = ({
   }
 
   const onClickUser = (userId: number) => {
-    navigation(`/user/${userId}`, { state: { preserveScroll: false } });
+    navigation(`/user/${userId}`);
   };
 
   const onClickVideo = (id: number) => {
@@ -111,12 +111,6 @@ const VideoDetails = ({
     callViewApi(Number(videoId));
   }, [videoId]);
 
-  // useEffect(() => {
-  //   if (videoDetailsLikes?.isUserLikeOrDisLike != null) {
-  //     setIsLiked(videoDetailsLikes?.isUserLikeOrDisLike);
-  //   }
-  // }, [videoDetailsLikes.isUserLikeOrDisLike]);
-
   return (
     <div className="videoDetailsContainer">
       <div className="subVideoDetailsContainer">
@@ -128,7 +122,6 @@ const VideoDetails = ({
               playing
               className={"videoPlyer"}
               width={"100%"}
-              height={"auto"}
             />
           </div>
           <h1>{video.title}</h1>

@@ -32,7 +32,7 @@ function Comments({
   };
 
   const onClickUser = (userId: number) => {
-    navigation(`/user/${userId}`, { state: { preserveScroll: false } });
+    navigation(`/user/${userId}`);
   };
 
   const handleOnSendComment = () => {

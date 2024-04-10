@@ -11,7 +11,7 @@ export default function VideoList({ videos }: { videos?: any[] }) {
   const { isDarkTheme } = useContext(MenuContext);
 
   const onClickUser = (userId: number) => {
-    navigation(`/user/${userId}`, { state: { preserveScroll: false } });
+    navigation(`/user/${userId}`);
   };
 
   const onClickVideo = (videoId: number) => {

@@ -58,7 +58,7 @@ const ProductPage = memo(() => {
   const [ratings, setRatings] = useState(0);
 
   const handlePageClick = (event: any) => {
-    window.scrollTo(0, 0);
+    // window.scrollTo(0, 0);
 
     if (Number(event?.nextSelectedPage) + 1) {
       setSearchParams((prevParams) => {
