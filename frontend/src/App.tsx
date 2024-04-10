@@ -27,6 +27,7 @@ import CheckoutPayment from "./components/Order/CheckoutPayment";
 import PaymentSuccess from "./components/Order/PaymentSuccess";
 import { MenuContext } from "./context/MainContext";
 import { ScrollRestoration } from "react-router-dom";
+import VideoUpload from "./components/VideoUpload";
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -79,9 +80,10 @@ export default function App() {
 
           {/*UnAuthenticated Routes */}
           <Route path="/profile" Component={Profile} />
-          {/* <Route path="/editProfile" Component={EditProfile} />
+          <Route path="/editProfile" Component={EditProfile} />
           <Route path="/updatePassword" Component={UpdatePassword} />
-          <Route path="/myCart" Component={CartPage} /> */}
+          <Route path="/upload" Component={VideoUpload} />
+          {/* <Route path="/myCart" Component={CartPage} /> */}
 
           <Route path="*" Component={() => <>Page Not found</>}></Route>
         </Routes>

@@ -2,6 +2,10 @@
   display: flex;
   align-items: center;
 }
+.largeFont {
+  font-size: large;
+  font-weight: bold;
+}
 #commentInput {
   flex: 1;
   background: inherit;

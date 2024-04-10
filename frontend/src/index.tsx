@@ -29,7 +29,6 @@ root.render(
             <Provider store={store}>
               <MenuProvider>
                 <App />
-                <></>
               </MenuProvider>
             </Provider>
           </HelmetProvider>

@@ -14,11 +14,13 @@ function Comments({
   loggedUser,
   comments,
   addComments,
+  totalComments,
 }: {
   commentId: number;
   loggedUser: any;
   comments: any;
   addComments: any;
+  totalComments: number;
 }) {
   const [commentText, setCommentText] = useState("");
   const navigation = useNavigate();
@@ -40,6 +42,7 @@ function Comments({
 
   return (
     <div style={{ width: "inherit" }}>
+      <h2 className="largeFont">{totalComments} Comments</h2>
       {loggedUser.isAuthenticated && (
         <div className="commentInputContainer">
           <Avatar
@@ -120,6 +123,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     loggedUser: state.login,
     comments: state.videoDetailsComment.comments,
+    totalComments: state.videoDetailsComment.totalComments,
   };
 };
 

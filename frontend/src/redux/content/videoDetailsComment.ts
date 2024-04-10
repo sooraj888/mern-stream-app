@@ -75,12 +75,14 @@ type initialState = {
   error: boolean;
   errorMessage: string;
   comments: Array<any>;
+  totalComments: number;
 };
 const initialState: initialState = {
   loading: false,
   error: false,
   errorMessage: "",
   comments: [],
+  totalComments: 0,
 };
 export const videoDetailsComment = createSlice({
   name: "videoDetailsComment",
@@ -100,6 +102,7 @@ export const videoDetailsComment = createSlice({
           state.loading = false;
           state.error = false;
           state.comments = data?.comments;
+          state.totalComments = state.comments.length;
         }
       )
       .addCase(getVideoDetailsComments.rejected.type, (state, action: any) => {
@@ -117,6 +120,7 @@ export const videoDetailsComment = createSlice({
       .addCase(addComments.pending, (state) => {})
       .addCase(addComments.fulfilled, (state, action: any) => {
         state.comments.unshift(action?.payload?.data?.comment);
+        state.totalComments = state.comments.length;
       })
       .addCase(addComments.rejected.type, (state, action: any) => {});
   },

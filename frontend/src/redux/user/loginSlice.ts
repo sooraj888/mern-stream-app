@@ -50,7 +50,7 @@ export const callLogoutApi = createAsyncThunk(
     const res = await axios
       .get(`/api/v1/logout`)
       .then((e) => {
-        navigate("/login");
+        window.location.reload();
         return e;
       })
       .catch((e) => {

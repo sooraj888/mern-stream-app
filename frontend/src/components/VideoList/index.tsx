@@ -54,7 +54,9 @@ export default function VideoList({ videos }: { videos?: any[] }) {
                   />
                   <span>
                     <p>
-                      <b>{video.title}</b>
+                      <b style={{ textTransform: "capitalize" }}>
+                        {video.title}
+                      </b>
                     </p>
                     <p
                       onClick={(e) => {

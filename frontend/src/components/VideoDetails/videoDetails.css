@@ -21,6 +21,12 @@
   font-size: large;
   font-weight: bolder;
 }
+
+.small-text {
+  font-size: x-small;
+  margin-bottom: 0.3vmax;
+}
+
 .videoDetailsList {
   width: 40vw;
   height: auto;
@@ -180,6 +186,18 @@
 }
 .commentContainer {
   margin-top: 1vmax;
+}
+
+.descriptionContainer {
+  background: rgba(128, 128, 128, 0.275);
+  padding: 0.2vmax 0.5vmax;
+  border-radius: 10px;
+  margin: 0.4vmax 0px;
+  min-height: 40px;
+}
+
+.descriptionContainer {
+  font-size: small;
 }
 
 @container (max-width:1000px) {

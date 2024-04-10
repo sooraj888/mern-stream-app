@@ -23,6 +23,7 @@ import {
   getVideoDetailsLikes,
 } from "../../redux/content/videoDetailsLikes";
 import { getVideoDetailsComments } from "../../redux/content/videoDetailsComment";
+import axios from "axios";
 
 const VideoDetails = ({
   getVideoList,
@@ -92,11 +93,22 @@ const VideoDetails = ({
     });
   };
 
+  const callViewApi = async (videoId: number) => {
+    if (videoId) {
+      try {
+        await axios.put(`/api/v1/updateViewCount`, {
+          videoId: videoId,
+        });
+      } catch (e) {}
+    }
+  };
+
   useEffect(() => {
     getVideoList(videoId);
     getVideoDetailsList(videoId);
     getVideoDetailsLikes(videoId);
     getVideoDetailsComments(videoId);
+    callViewApi(Number(videoId));
   }, [videoId]);
 
   // useEffect(() => {
@@ -120,6 +132,7 @@ const VideoDetails = ({
             />
           </div>
           <h1>{video.title}</h1>
+
           <div className="videoDetailsOwner">
             <span>
               <Avatar
@@ -199,6 +212,14 @@ const VideoDetails = ({
               </span>
             </span>
           </div>
+          <div className="descriptionContainer">
+            <h3 className="center small-text">
+              {video.totalViews}
+              {" views"} <span className="dot"></span> {ago(video.createdAt)}
+            </h3>
+            <h2>{video?.description}</h2>
+          </div>
+
           <div className="commentContainer">
             <Comments commentId={video.videoId} />
           </div>
