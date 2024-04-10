@@ -122,6 +122,11 @@ const VideoDetails = ({
               playing
               className={"videoPlyer"}
               width={"100%"}
+              height={
+                video?.videoMetaData?.width > video?.videoMetaData?.height
+                  ? "auto"
+                  : 360
+              }
             />
           </div>
           <h1>{video.title}</h1>
