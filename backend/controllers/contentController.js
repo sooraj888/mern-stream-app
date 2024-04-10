@@ -88,6 +88,7 @@ exports.getContent = catchAsyncErrors(async (req, res) => {
     limit: req.query.limit || 20,
     offset: req.query.offset || 0,
     where: whereObj,
+    order: [["createdAt", "DESC"]],
     include: [
       {
         model: Users,
